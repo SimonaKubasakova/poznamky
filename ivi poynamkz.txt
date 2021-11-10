@@ -1,0 +1,65 @@
+dht 11
+//dht 11 meria tepltou  0-50 °C, s odchylkou 1°C a vlhkos 20-90% s odchylkou 4%
+ - nema vnutorny odpor, ma mikroprocesor ktory na v momente da tepltu aby sme ju nemuseli ratat
+ - vcc=napajanie, meria teplotu
+ - cas medzi merianiami je kazde 2s
+ - ma 4 piny, (vcc,data, nc, ground - nepouzivame ho)
+
+Existuje knoznica, ktora nam zjednodusuje pracu s teplomerom-
+
+
+Instalacia kniznice
+1) Spustime prostredie-> Menezer Kniznic, klikneme ked sa aktualizuje zoznam, vyhladame si v nom DHT 11
+2)Ked to klikneme objavi sa nam okono, ktore znaci ze nas akniznica pouziva dalsiu kniznicu kotur nam nainstaluje s nou ak to potvrdime
+
+3) Pripojenie kniznice -> Pouzijeme vzorovy priklad -> Súbor, Príklad, DHT sensor LIBRARY, DHT TESTER
+	Maju rozsiahlu dokumen taciu (Nikdy ho neprepisujme!), -> uloži ako DH11Teplomer 
+
+DHT11Teplomer ---------------------------------------------------------------------------------------------------
+Vychadzame z dokumentacie na GitHube - nechame si ich v kode
+Odkomentujeme si typ sensoru ktory chcem pouzivat (DHT11)
+
+#define DHTPIN 5     // Digital pin connected to the DHT sensor - konstanta pouzivana v kode, vzdy budeme pouzivat vytup GPIO(5)
+
+DHT dht(DHTPIN, DHTTYPE) //deklaracia- tento riadok vytvara objekt(instanciu) na zaklade triedy
+
+
+DHT - datovy typ, objekt DHT
+dht- meno premenej
+(DHTPIN,DHTTYPE) - 2parametricky kontruktor, inicializacia konstruktorov
+
+void setup() { //funkcia setup- vykonava kod, ktory sa vykona len po spusteni, spustenie serioveho rozhrania
+  Serial.begin(9600);  //seriová komunikacia, potrebujeme minimalne 2 zariadeni
+  Serial.println(F("DHTxx test!"));
+
+  dht.begin(); //volanie metody objektu dht
+	      //metoda = begin
+}
+
+
+float h = dht.readHumidity();               //metody, kotre poziadju o hodnotu vlhkosti a teploty, ulozia sa do premenných 'h' a 't'
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = dht.readTemperature(true);
+
+
+
+-seriova komunakacia je komunikacia dvoch zariadeni                                                                                             
+-OLED DISPLAY CROWTAIL OLED
+    -oled displeji netreba pdsvietenie, ma nizsiu spotrebu
+    -farba/modra-cierna
+    -128x64 pixel (0,96palcovy)
+    -vyuzijeme kniznicu, ktora nahradi programovanie
+    -nepotrebuje prevodnik, vestko to ma prisposobene aby fungoval aj na 3V aj na 5V
+    -zbernicovy model I(2C)
+    -je tam osadeny SSD1306 radiè
+    -nema reset tlaèítko
+    -ma adresu 0x3D-adresu zistime na plošaku alebo pomocou programu ktory nam ju zisti
+    -zbernicovy sposob komunikacie nam usetri piny, vieme na zbernicu pripojit lubovolny pcet zariadeny (128), rozdeluje sa to na Master a slave, Master bude ESP a ten rozhoduje kto s kym bude komunikovat
+    -ak by som chcel pripojit 2 rovnake teplomery na ESP takto nebude dobre fungovat kvoli adrese, nesmu byt rovnake!
+    -instalujeme kniznicu SSD1306-adafruit
+    
+    -C/users/student/dokumenty/arduino/libraries/adafruit_ssd1306-->v subore adafruitSSD1306.h zakomentujeme riadok 29 a odkomentujeme riadok 28
+    
+   Na našej crowtail doske je zbernica na pinoch 12,14 
